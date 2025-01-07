@@ -11,90 +11,159 @@ package models;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import utils.DatabaseConnection;
 
 public class Reservasi {
-    private int idPelanggan;
-    private int idKamar;
-    private int idMetodeTunai;
-    private int idMetodeTransfer;
-    private String idStaff;
-    private String tanggalReservasi;
+    private int id; // Tambahkan atribut id
+    private String name;
+    private String phone;
+    private String checkin;
+    private String checkout;
+    private String guests;
+    private String roomType;
+    private String paymentMethod;
 
-    public Reservasi(int idPelanggan, int idKamar, int idMetodeTunai, int idMetodeTransfer, String idStaff, String tanggalReservasi) {
-        this.idPelanggan = idPelanggan;
-        this.idKamar = idKamar;
-        this.idMetodeTunai = idMetodeTunai;
-        this.idMetodeTransfer = idMetodeTransfer;
-        this.idStaff = idStaff;
-        this.tanggalReservasi = tanggalReservasi;
+    // Konstruktor untuk data baru
+    public Reservasi(String name, String phone, String checkin, String checkout, String guests, String roomType, String paymentMethod) {
+        this.name = name;
+        this.phone = phone;
+        this.checkin = checkin;
+        this.checkout = checkout;
+        this.guests = guests;
+        this.roomType = roomType;
+        this.paymentMethod = paymentMethod;
     }
 
-    // Getter dan Setter
-    public int getIdPelanggan() {
-        return idPelanggan;
+    // Konstruktor untuk data dari database (termasuk ID)
+    public Reservasi(int id, String name, String phone, String checkin, String checkout, String guests, String roomType, String paymentMethod) {
+        this.id = id;
+        this.name = name;
+        this.phone = phone;
+        this.checkin = checkin;
+        this.checkout = checkout;
+        this.guests = guests;
+        this.roomType = roomType;
+        this.paymentMethod = paymentMethod;
     }
 
-    public void setIdPelanggan(int idPelanggan) {
-        this.idPelanggan = idPelanggan;
+    // Getter untuk semua atribut
+    public int getId() {
+        return id;
     }
 
-    public int getIdKamar() {
-        return idKamar;
+    public String getName() {
+        return name;
     }
 
-    public void setIdKamar(int idKamar) {
-        this.idKamar = idKamar;
+    public String getPhone() {
+        return phone;
     }
 
-    public int getIdMetodeTunai() {
-        return idMetodeTunai;
+    public String getCheckin() {
+        return checkin;
     }
 
-    public void setIdMetodeTunai(int idMetodeTunai) {
-        this.idMetodeTunai = idMetodeTunai;
+    public String getCheckout() {
+        return checkout;
     }
 
-    public int getIdMetodeTransfer() {
-        return idMetodeTransfer;
+    public String getGuests() {
+        return guests;
     }
 
-    public void setIdMetodeTransfer(int idMetodeTransfer) {
-        this.idMetodeTransfer = idMetodeTransfer;
+    public String getRoomType() {
+        return roomType;
     }
 
-    public String getIdStaff() {
-        return idStaff;
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setIdStaff(String idStaff) {
-        this.idStaff = idStaff;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getTanggalReservasi() {
-        return tanggalReservasi;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public void setTanggalReservasi(String tanggalReservasi) {
-        this.tanggalReservasi = tanggalReservasi;
+    public void setCheckin(String checkin) {
+        this.checkin = checkin;
     }
+
+    public void setCheckout(String checkout) {
+        this.checkout = checkout;
+    }
+
+    public void setGuests(String guests) {
+        this.guests = guests;
+    }
+
+    public void setRoomType(String roomType) {
+        this.roomType = roomType;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
 
     // Simpan data ke database
-    public void saveToDatabase() throws SQLException {
-        String query = "INSERT INTO Reservasi (tanggalReservasi, idPelanggan, idKamar, idMetodeTunai, idMetodeTransfer, idStaff) VALUES (?, ?, ?, ?, ?, ?)";
+    public int saveToDatabase() throws SQLException {
+        String query = "INSERT INTO Reservasi (name, phone, checkin, checkout, guests, roomType, paymentMethod) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
+            statement.setString(1, this.name);
+            statement.setString(2, this.phone);
+            statement.setString(3, this.checkin);
+            statement.setString(4, this.checkout);
+            statement.setInt(5, Integer.parseInt(this.guests));
+            statement.setString(6, this.roomType);
+            statement.setString(7, this.paymentMethod);
+
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        this.id = generatedKeys.getInt(1); // Simpan ID yang dihasilkan
+                        return this.id;
+                    }
+                }
+            }
+            throw new SQLException("Gagal menyimpan data, tidak ada baris yang terpengaruh.");
+        }
+    }
+
+
+    // Ambil data dari database berdasarkan ID
+    public static Reservasi getById(int id) throws SQLException {
+        String query = "SELECT * FROM Reservasi WHERE id = ?";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
 
-            statement.setString(1, this.tanggalReservasi);
-            statement.setInt(2, this.idPelanggan);
-            statement.setInt(3, this.idKamar);
-            statement.setInt(4, this.idMetodeTunai);
-            statement.setInt(5, this.idMetodeTransfer);
-            statement.setString(6, this.idStaff);
+            statement.setInt(1, id);
 
-            statement.executeUpdate();
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return new Reservasi(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("phone"),
+                        resultSet.getString("checkin"),
+                        resultSet.getString("checkout"),
+                        resultSet.getString("guests"),
+                        resultSet.getString("roomType"),
+                        resultSet.getString("paymentMethod")
+                    );
+                }
+            }
         }
+        return null; // Jika ID tidak ditemukan
     }
 }

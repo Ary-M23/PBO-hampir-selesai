@@ -152,7 +152,7 @@
     <main class="py-10" style="background-color: #f5e4c8;">
         <section class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
             <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Formulir Reservasi</h2>
-            <form action="pembayaran.jsp" method="POST" class="space-y-6">
+            <form action="auth" method="POST" class="space-y-6">
                 <!-- Nama -->
                 <div>
                     <label for="name" class="block text-gray-700 font-medium">Nama Lengkap:</label>
@@ -255,6 +255,7 @@
                     </button>
                 </div>
             </form>
+            ${msg}
         </section>
     </main>
 </body>
