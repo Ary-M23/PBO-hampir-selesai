@@ -10,19 +10,25 @@ package controllers;
  */
 
 import models.Reservasi;
-
 import java.sql.SQLException;
 
 public class ReservationController {
-
-    public void createReservation(int idPelanggan, int idKamar, int idMetodeTunai, int idMetodeTransfer, String idStaff, String tanggalReservasi) {
-        Reservasi reservasi = new Reservasi(idPelanggan, idKamar, idMetodeTunai, idMetodeTransfer, idStaff, tanggalReservasi);
-
+    public int createReservation(String name, String phone, String checkin, String checkout, String guests, String roomType, String paymentMethod) {
+        Reservasi reservasi = new Reservasi(name, phone, checkin, checkout, guests, roomType, paymentMethod);
         try {
-            reservasi.saveToDatabase();
-            System.out.println("Reservasi berhasil disimpan ke database.");
+            return reservasi.saveToDatabase(); // Simpan ke database dan dapatkan ID
         } catch (SQLException e) {
-            System.err.println("Terjadi kesalahan saat menyimpan reservasi: " + e.getMessage());
+            System.err.println("Error saat menyimpan reservasi: " + e.getMessage());
+            return -1; // Indikasi kesalahan
+        }
+    }
+
+    public Reservasi getReservationById(int id) {
+        try {
+            return Reservasi.getById(id); // Ambil data berdasarkan ID
+        } catch (SQLException e) {
+            System.err.println("Error saat mengambil reservasi: " + e.getMessage());
+            return null;
         }
     }
 }

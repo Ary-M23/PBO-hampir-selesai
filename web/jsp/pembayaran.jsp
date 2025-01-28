@@ -1,4 +1,3 @@
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -18,125 +17,94 @@
         </header>
         <div class="container mx-auto py-10">
             <div class="bg-white shadow-md p-8 rounded-lg">
-                <%
-                    // Mengambil data dari form yang dikirimkan
-                    String name = request.getParameter("name");
-                    String phone = request.getParameter("phone");
-                    String checkin = request.getParameter("checkin");
-                    String checkout = request.getParameter("checkout");
-                    String guests = request.getParameter("guests");
-                    String roomType = request.getParameter("room-type");
-                    String paymentMethod = request.getParameter("payment-method");
+                <% 
+                    // Ambil data dari request
+                    models.Reservasi reservasi = (models.Reservasi) request.getAttribute("reservation");
 
-                    // Menangani jika data tidak ada (fallback)
-                    if (name == null) {
-                        name = "Nama tidak diketahui";
-                    }
-                    if (phone == null) {
-                        phone = "Nomor telepon tidak diketahui";
-                    }
-                    if (checkin == null) {
-                        checkin = "Tanggal check-in tidak diketahui";
-                    }
-                    if (checkout == null) {
-                        checkout = "Tanggal check-out tidak diketahui";
-                    }
-                    if (guests == null) {
-                        guests = "Jumlah tamu tidak diketahui";
-                    }
-                    if (roomType == null) {
-                        roomType = "Jenis kamar tidak diketahui";
-                    }
-                    if (paymentMethod == null)
-                        paymentMethod = "Metode pembayaran tidak diketahui";
+                    if (reservasi == null) {
                 %>
-
-                <!-- Tampilkan logo QRIS jika metode pembayaran adalah QRIS -->
-                <%
-                    if ("qris".equals(paymentMethod)) {
-                %>
-                <div class="text-center mb-6">
-                    <img src="../gambar/QR.webp" alt="QRIS" class="mx-auto h-40 w-auto">
-                </div>
-                <%
-                } else if ("dana".equals(paymentMethod)) {
-                %>
-                <div class="text-center mb-6">
-                    <img src="../gambar/QR.webp" alt="Dana" class="mx-auto h-40 w-auto">
-                </div>
-                <%
-                } else if ("Ovo".equals(paymentMethod)) {
-                %>
-                <div class="text-center mb-6">
-                    <img src="../gambar/QR.webp" alt="OVO" class="mx-auto h-40 w-auto">
-                </div>
-                <%
-                    }
-                %>
-
-                <!--Tampilan Nomor Virtual Account Bank-->
-                <%
-                    if ("bri".equals(paymentMethod)) {
-                %>
-                <div class="text-center mb-6">
-                    <p class="text-lg font-bold text-gray-700">Nomor Virtual Account BRI:</p>
-                    <p class="text-2xl font-mono text-blue-600">1234567890</p>
-                </div>
-                <%
-                } else if ("mandiri".equals(paymentMethod)) {
-                %>
-                <div class="text-center mb-6">
-                    <p class="text-lg font-bold text-gray-700">Nomor Virtual Account Mandiri:</p>
-                    <p class="text-2xl font-mono text-blue-600">9876543210</p>
-                </div>
-                <%
-                } else if ("bca".equals(paymentMethod)) {
-                %>
-                <div class="text-center mb-6">
-                    <p class="text-lg font-bold text-gray-700">Nomor Virtual Account BCA:</p>
-                    <p class="text-2xl font-mono text-blue-600">1122334455</p>
-                </div>
-                <%
-                    }
-                %>
-
-
-                <div class="space-y-6">
-                    <div class="flex items-center justify-between">
-                        <span class="font-medium">Nama Pemesan:</span>
-                        <span><%= name%></span>
+                    <div class="text-red-500 text-center font-bold">
+                        Data reservasi tidak ditemukan.
                     </div>
-                    <div class="flex items-center justify-between">
-                        <span class="font-medium">Nomor Telepon:</span>
-                        <span><%= phone%></span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="font-medium">Tanggal Check-in:</span>
-                        <span><%= checkin%></span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="font-medium">Tanggal Check-out:</span>
-                        <span><%= checkout%></span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="font-medium">Jumlah Tamu:</span>
-                        <span><%= guests%></span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="font-medium">Jenis Kamar:</span>
-                        <span><%= roomType%></span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="font-medium">Metode Pembayaran:</span>
-                        <span><%= paymentMethod%></span>
+                <% 
+                    } else { 
+                        // Dapatkan paymentMethod dari objek reservasi
+                        String paymentMethod = reservasi.getPaymentMethod();
+                %>
+                    <!-- Informasi Reservasi -->
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium">Nama Pemesan:</span>
+                            <span><%= reservasi.getName() %></span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium">Nomor Telepon:</span>
+                            <span><%= reservasi.getPhone() %></span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium">Tanggal Check-in:</span>
+                            <span><%= reservasi.getCheckin() %></span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium">Tanggal Check-out:</span>
+                            <span><%= reservasi.getCheckout() %></span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium">Jumlah Tamu:</span>
+                            <span><%= reservasi.getGuests() %></span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium">Jenis Kamar:</span>
+                            <span><%= reservasi.getRoomType() %></span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium">Metode Pembayaran:</span>
+                            <span><%= paymentMethod %></span>
+                        </div>
                     </div>
 
-                    <!-- Proses Pembayaran -->
-                    <div class="flex items-center justify-between font-bold text-2xl">
+                    <!-- Tampilkan logo QRIS atau informasi lainnya sesuai metode pembayaran -->
+                    <div class="text-center my-6">
+                        <%
+                            if ("qris".equals(paymentMethod)) {
+                        %>
+                        <img src="../gambar/QR.webp" alt="QRIS" class="mx-auto h-40 w-auto">
+                        <%
+                            } else if ("dana".equals(paymentMethod)) {
+                        %>
+                        <img src="../gambar/dana.webp" alt="Dana" class="mx-auto h-40 w-auto">
+                        <%
+                            } else if ("Ovo".equals(paymentMethod)) {
+                        %>
+                        <img src="../gambar/ovo.webp" alt="OVO" class="mx-auto h-40 w-auto">
+                        <%
+                            } else if ("bri".equals(paymentMethod)) {
+                        %>
+                        <p class="text-lg font-bold text-gray-700">Nomor Virtual Account BRI:</p>
+                        <p class="text-2xl font-mono text-blue-600">1234567890</p>
+                        <%
+                            } else if ("mandiri".equals(paymentMethod)) {
+                        %>
+                        <p class="text-lg font-bold text-gray-700">Nomor Virtual Account Mandiri:</p>
+                        <p class="text-2xl font-mono text-blue-600">9876543210</p>
+                        <%
+                            } else if ("bca".equals(paymentMethod)) {
+                        %>
+                        <p class="text-lg font-bold text-gray-700">Nomor Virtual Account BCA:</p>
+                        <p class="text-2xl font-mono text-blue-600">1122334455</p>
+                        <%
+                            }
+                        %>
+                    </div>
+
+                    <!-- Total Pembayaran -->
+                    <div class="flex items-center justify-between font-bold text-2xl mt-6">
                         <span>Total Bayar:</span>
-                        <span>Rp 500.000</span>
+                        <span>Rp 500.000</span> <!-- Ganti dengan total pembayaran aktual jika tersedia -->
                     </div>
-                </div>
+                <% 
+                    } 
+                %>
             </div>
         </div>
     </body>
